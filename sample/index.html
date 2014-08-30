@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>freeCSV</title>
+	<script src="../src/freeCSV.js" type="text/javascript" ></script>
+</head>
+<body>
+
+	<form action="">
+		<input type="file" id="CSVFileInput">
+		<button type="submit">Parse</button>
+	</form>
+	
+
+	<script type="text/javascript">
+		var input = document.getElementById('CSVFileInput');
+
+		input.addEventListener('change', function () {
+			var fileList = input.files;
+			console.log(fileList);
+			var csv = new freeCSV({
+				fileList: fileList
+			});
+
+			csv.parse(function(files){
+				console.log(file);
+			});
+		});
+
+
+
+	</script>
+
+</body>
+</html>

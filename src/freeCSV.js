@@ -1,4 +1,8 @@
-
+/**
+ * freeCSV (c) Aaron Freeland - afreeland - 2014
+ *
+ * freeCSV provides a fast and efficient way to parse CSV files client side before uploading to server
+ */
 
 (function(window){
 

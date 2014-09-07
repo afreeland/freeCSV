@@ -125,7 +125,7 @@
 				}
 
 				_file.totalRecords = (self.hasHeaders) ? row - 1 : row;
-				debugger;
+				callback.call(this, _file);
 			});
 		},
 

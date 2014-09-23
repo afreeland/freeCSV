@@ -33,7 +33,7 @@ freeCSV was created so that a user can see their CSV data and map it appropriate
 ## Options
 
 | Property | Type | Required | Purpose |
-| -------- | ---- | ------- |
+| -------- | ---- | -------- | -------- |
 | **hasHeaders** | *bool* | Optional - true by default | Lets parser know to expect a header row |
 | **delimiter** | *string* | Optional - ',' by default | What character(s) your csv uses as a delimiter |
 | **enablePerf** | *bool* | Optional | Performance timer that logs execution time |

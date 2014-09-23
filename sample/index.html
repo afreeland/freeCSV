@@ -15,6 +15,9 @@
 	</style>
 
 	<form action="">
+		<ul class="list-unstyled">
+			<li><label for="delimiter">Delimiter </label><input type="text" id="delimiter" value=","></li>
+		</ul>
 		<input type="file" id="CSVFileInput">
 		<button type="submit">Parse</button>
 	</form>
@@ -63,15 +66,32 @@
 
 		input.addEventListener('change', function () {
 			var fileList = input.files;
-			console.log(fileList);
+			
+			var del = $('#delimiter').val();
+
 			var csv = new freeCSV({
-				fileList: fileList
+				//fileList: fileList,
+				enablePerf: true,
+				delimiter: del
 			});
 
-			csv.parse(function(file){
-				console.log(file);
-				buildGrid(file);
+			var testData = 'Sam, Fisher, splinter@cell.com, 304-555-5555\r\n'+
+			'Naruto, Uzumaki, nine@tails.net, 714-919-3425\r\n';
+
+			csv.parseFiles(fileList, function (err, results) {
+				if(err)throw err;
+				console.log(results);
 			});
+
+			csv.parseString(testData, function (err, results) {
+				if(err)throw err;
+				console.log(results);
+			});
+
+			// csv.parse(function(file){
+			// 	console.log(file);
+			// 	buildGrid(file);
+			// });
 		});
 
 		

@@ -37,127 +37,137 @@
 		}
 	};
 
-	var handlers = {
-		reader: {
-			onloadend: function (currentFile, callback) {
-				return function(evt){
-					if(util.isFunction(callback))
-						callback.call(this, currentFile, evt);
-				};
-			}
-		}
-	};
 
 	function CSV (options) {
 		options = options || {};
-		this.files = options.fileList || [];
 		this.hasHeaders = options.hasHeaders || true;
 		this.delimiter = options.delimiter || _options.delimiter;
 		this.supportedExtensions = options.supportedExtensions || _options.supportedExtensions;
 		this.parsedFiles = [];
+		this.enablePerf = options.enablePerf || false;
+
+		if(this.enablePerf){
+			console.time('time to execute');
+		}
 	}
 
 	CSV.prototype = {
 
-		files: function () {
-			return this.files;
-		},
-
-		parse: function (callback) {
-			var self = this, filesLength = this.files.length;
-
-			if(!filesLength || filesLength === 0)
-				throw new Error("No files are present.");
-			
-			this.readFiles(function (currentFile, evt) {
-				var _file = {
-					filename: currentFile.name,
-					size: currentFile.size,
-					type: currentFile.type,
-					totalRecords: 0,
-					headers: [],
-					data: [],
-					lastModifiedDate: currentFile.lastModifiedDate
+		onLoadEnd: function (currentFile, readerFN, callback) {
+			var self = this;
+			return function(evt){
+					if(util.isFunction(readerFN))
+						readerFN.call(self, currentFile, evt, callback);
 				};
-
-				// Get the ArrayBuffer
-				var data = evt.target.result;
-
-				// Grab our byte length
-				var byteLength = data.byteLength;
-
-				// Convert to conventional array, so we can iterate through it
-				var ui8a = new Uint8Array(data, 0);
-
-				var row = 0; // Start counting number of rows/records
-				var record = ''; // We will store our characters in here and then split on the delimiter to get our values
-
-				// Iterate through each character in our Array
-				for (var i = 0; i < byteLength; i++) {
-					// Continue if we come across a line feed character, otherwise it will fail regex
-					// and push empty record into our data array
-					if(ui8a[i] === 10)
-						continue;
-
-					// Get character from our current iteration
-					var char = String.fromCharCode(ui8a[i]);
-
-					// Test if we have hit a new line character or char code 10 (line feed)
-					if(char.match(regex.newLine) !== null){
-
-						// Not a new line so lets append it to our record string
-						record += char;
-					}else{
-
-						// See if we have a header row and on our first record
-						if(row === 0 && self.hasHeaders){
-							_file.headers = record.split(self.delimiter);
-						}else{
-							_file.data.push(record.split(self.delimiter));
-						}
-
-						row++; // increment our row count
-						record = '';
-						continue;
-					}
-
-
-				}
-
-				_file.totalRecords = (self.hasHeaders) ? row - 1 : row;
-				callback.call(this, _file);
-			});
 		},
 
-		readFiles: function (callback) {
-			var self = this, filesLength = this.files.length;
+		getRecords: function  (file, evt, callback) {
+			var self = this;
+			var _file = {
+				filename: file.name,
+				size: file.size,
+				type: file.type,
+				totalRecords: 0,
+				headers: [],
+				data: {},
+				lastModifiedDate: file.lastModifiedDate
+			};
 
-			// Iterate through each of the files
-			for (var i = 0; i < filesLength; i++) {
-				
-				var reader = new FileReader(),
-					file = self.files[i];
+			// Get the ArrayBuffer
+			var data = evt.target.result;
 
-				// Ensure that we are dealing with a valid file type
-				util.checkFileExtension(file.name, self.supportedExtensions);
+			// Grab our byte length
+			var byteLength = data.byteLength;
 
-				// Closure handler function that is triggered each time the reading operation is completed (success or failure)
-				reader.onloadend = (handlers.reader.onloadend)(file, callback);
+			// Convert to conventional array, so we can iterate through it
+			var ui8a = new Uint8Array(data, 0);
 
-				// Read our file as an ArrayBuffer
-				reader.readAsArrayBuffer(file);
+			var row = 0; // Start counting number of rows/records
+			var record = ''; // We will store our characters in here and then split on the delimiter to get our values
+
+			// Iterate through each character in our Array
+			for (var i = 0; i < byteLength; i++) {
+				// Continue if we come across a line feed character, otherwise it will fail regex
+				// and push empty record into our data array
+				if(ui8a[i] === 10)
+					continue;
+
+				// Get character from our current iteration
+				var char = String.fromCharCode(ui8a[i]);
+
+				// Test if we have hit a new line character or char code 10 (line feed)
+				if(char.match(regex.newLine) !== null){
+
+					// Not a new line so lets append it to our record string
+					record += char;
+				}else{
+
+					// See if we have a header row and on our first record
+					if(row === 0 && self.hasHeaders){
+						_file.headers = record.split(self.delimiter);
+					}else{
+						_file.data[row] = record.split(self.delimiter);
+					}
+					row++; // increment our row count
+					record = '';
+					continue;
+				}
+			}
+
+			_file.totalRecords = (self.hasHeaders) ? row - 1 : row;
+			if(self.enablePerf){
+				console.timeEnd('time to execute');
+			}
+
+			callback.call(this, null, _file);
+		},
+
+		readFile: function (file, callback) {
+			var self = this;
+			var reader = new FileReader();
+
+			// Ensure that we are dealing with a valid file type
+			util.checkFileExtension(file.name, self.supportedExtensions);
+
+			// Closure handler function that is triggered each time the reading operation is completed (success or failure)
+			reader.onloadend = (self.onLoadEnd)(file, self.getRecords, callback);
+
+			// Read our file as an ArrayBuffer
+			reader.readAsArrayBuffer(file);
+		},
+
+		parseFile: function (file, callback) {
+			var self = this;
+			if(!file)
+				callback(new Error("Failed to provide file for parsing."));
+
+			this.readFile(file, callback);
+
+		},
+
+		parseFiles: function (files, callback) {
+			for (var i = files.length - 1; i >= 0; i--) {
+				this.parseFile(files[i], callback);
 			}
 		},
 
+		parseString: function (data, callback) {
+			if(!data || typeof data != 'string')
+				callback(new Error('No string provided'));
+
+			var _file;
+			try{
+				_file = new File([data], 'free.csv', { type: 'text/csv'});
+			}catch(e){
+				callback(new Error('Failed to create temp file with csv data'));
+			}
+			this.parseFile(_file, callback);
+		},
+
 		getHeaders: function () {
-			
-
-
-
 		},
 
 		getRecord: function () {
-			
 		}
 	};
 

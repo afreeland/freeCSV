@@ -14,6 +14,18 @@ freeCSV allows a user to upload a CSV file and parse it client side.  This means
 freeCSV was created so that a user can see their CSV data and map it appropriately.  All of this happening in real-time with their file data and no server req/res needed.
 
 
+##What does the parsed result look like
+
+| Property | Type | Purpose |
+| -------- | ---- | ------- |
+| data | *object* | Stores each record minus headers as an array, with its row number being the key |
+| filename | *string* | Identifies the name of the file given to the parser |
+| headers | *array* | Stores the headers separately when applicable |
+| size | *number* | Size of the file in bytes |
+| totalRecords | *number* | How many records (rows) are in the csv file |
+| type | *string* | The mime type for the file |
+
+
 ##How to use freeCSV
 
 ### Parse via File/Filelist

@@ -41,14 +41,25 @@ freeCSV was created so that a user can see their CSV data and map it appropriate
 
 ## Methods
 
-### Parse File
+### parseFile
 | Parameters | Type | Purpose |
 | --------- | ---- | ------- |
 | **file** | *File* | Actual file used to parse |
 | **callback** | *func* | Hands parsed result back |
 
+### parseFiles
+| Parameters | Type | Purpose |
+| --------- | ---- | ------- |
+| **files** | *FileList* | Actual file used to parse |
+| **callback** | *func* | Hands parsed result back |
+
+### parseString
+| Parameters | Type | Purpose |
+| --------- | ---- | ------- |
+| **files** | *FileList* | Actual file used to parse |
+| **callback** | *func* | Hands parsed result back |
+
 ## Callbacks
-You can expect all methods to return this common callback mentality
 --
 
 | Arguments | Type | Purpose |
@@ -56,6 +67,7 @@ You can expect all methods to return this common callback mentality
 | **error** | *Error* | An error that has been thrown during parsing execution |
 | **result** | *obj* | The parsed result object |
 
+*You can expect all methods to return this common callback mentality*
 
 ##How to use freeCSV
 

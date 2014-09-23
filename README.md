@@ -13,6 +13,9 @@ freeCSV allows a user to upload a CSV file and parse it client side.  This means
 ##What was it created for?
 freeCSV was created so that a user can see their CSV data and map it appropriately.  All of this happening in real-time with their file data and no server req/res needed.
 
+--
+
+
 
 ##What does the parsed result look like
 

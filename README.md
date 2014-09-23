@@ -49,6 +49,8 @@ freeCSV was created so that a user can see their CSV data and map it appropriate
 
 ## Callbacks
 You can expect all methods to return this common callback mentality
+--
+
 | Arguments | Type | Purpose |
 | --------- | ---- | ------- |
 | **error** | *Error* | An error that has been thrown during parsing execution |

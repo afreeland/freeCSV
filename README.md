@@ -32,25 +32,27 @@ You may pass a file object into freeCSV and it will parse contents based on the 
 var input = document.getElementById('CSVFileInput');
 input.addEventListener('change', function () {
 	var _fileList = input.files;
+
+	var csv = new freeCSV({
+		delimiter: ',', // type of delimiter being used for this file
+		hasHeaders: false // true by default
+	});
+
+	csv.parseFiles(_fileList, function(err, result){
+		if(err) throw new Error(err);
+
+		console.log(result);
+	});
+
+	// Alternatively for single file
+	csv.parseFile(_fileList[0], function(){
+		if(err) throw new Error(err);
+
+		console.log(result);
+	});
 });
 
-var csv = new freeCSV({
-	delimiter: ',', // type of delimiter being used for this file
-	hasHeaders: false // true by default
-});
 
-csv.parseFiles(_fileList, function(err, result){
-	if(err) throw new Error(err);
-
-	console.log(result);
-});
-
-// Alternatively for single file
-csv.parseFile(_fileList[0], function(){
-	if(err) throw new Error(err);
-
-	console.log(result);
-});
 ```
 
 ### Parse via String

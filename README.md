@@ -56,12 +56,10 @@ freeCSV was created so that a user can see their CSV data and map it appropriate
 ### parseString
 | Parameters | Type | Purpose |
 | --------- | ---- | ------- |
-| **files** | *FileList* | Actual file used to parse |
+| **data** | *FileList* | Actual file used to parse |
 | **callback** | *func* | Hands parsed result back |
 
 ## Callbacks
---
-
 | Arguments | Type | Purpose |
 | --------- | ---- | ------- |
 | **error** | *Error* | An error that has been thrown during parsing execution |

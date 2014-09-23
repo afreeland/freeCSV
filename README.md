@@ -52,7 +52,7 @@ You can expect all methods to return this common callback mentality
 | Arguments | Type | Purpose |
 | --------- | ---- | ------- |
 | **error** | *Error* | An error that has been thrown during parsing execution |
-| **result** | *obj* | The parsed result object
+| **result** | *obj* | The parsed result object |
 
 
 ##How to use freeCSV
